@@ -38,9 +38,14 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         e.setJoinMessage(JinroRPG.GameMessage + e.getPlayer().getName() + "さんがログインしました");
-        if(!JinroRPG.JinroPlayers.containsKey(e.getPlayer()) && !JinroRPG.isStarted) {
+        if(!JinroRPG.JinroPlayers.containsKey(e.getPlayer())) {
             JinroPlayer player = new JinroPlayer(e.getPlayer());
             JinroRPG.JinroPlayers.put(e.getPlayer(), player);
+            if(JinroRPG.isStarted) {
+                e.getPlayer().setGameMode(GameMode.SPECTATOR);
+                e.getPlayer().teleport(StartCommand.location);
+                e.getPlayer().sendMessage(JinroRPG.GameMessage + "すでにゲームが開始していたため、スペクテイターになりました。");
+            }
         }
     }
 
@@ -204,6 +209,8 @@ public class EventListener implements Listener {
                         e.getPlayer().sendMessage(JinroRPG.GameMessage + "昼の間は使用することができません!");
                     }
                 }
+            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "オンラインショップ") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
+                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(e.getPlayer()));
             }
         } catch (Exception ignored) {}
     }

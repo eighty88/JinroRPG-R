@@ -3,6 +3,7 @@ package com.github.eighty88.jinrorpg.playerlist;
 import com.github.eighty88.jinrorpg.JinroRPG;
 import com.github.eighty88.jinrorpg.controller.GameController;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
+import com.github.eighty88.jinrorpg.roles.RoleType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -26,6 +27,13 @@ public class OperatorList {
             assert skullMeta != null;
             skullMeta.setOwningPlayer(p);
             skullMeta.setDisplayName(ChatColor.RESET.toString() + ChatColor.AQUA + p.getName());
+            if(jinroPlayer.getRole().equals(RoleType.WATCHING) || jinroPlayer.getRole().equals(RoleType.NONE)) {
+                lore.add(ChatColor.RESET.toString() + ChatColor.GRAY + "観戦");
+                skullMeta.setLore(lore);
+                head.setItemMeta(skullMeta);
+                inv.addItem(head);
+                continue;
+            }
             if(GameController.Robbery.getName().equals(p.getName())) {
                 lore.add(jinroPlayer.getRole().toString() + "(強盗)");
             } else {
