@@ -79,6 +79,7 @@ public class GameController {
                 player.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + p.getRole().toString());
             }
         }
+        JinroRPG.isStarted = true;
         BossBarController.CreateBossBar(ChatColor.RED + "人狼RPG", BarColor.GREEN, BarStyle.SOLID);
         TimeController.StartTimer();
         JinroRPGAPI.onStart();
@@ -119,6 +120,7 @@ public class GameController {
         LivingPlayerController.isVampireDead = false;
         ArmorStands.clear();
         Jinro.clear();
+        JinroRPG.isStarted = false;
         JinroPlayer.RefreshPlayers();
         for(Sign sign: Signs) {
             sign.setLine(1, "右クリックで役職記録");
