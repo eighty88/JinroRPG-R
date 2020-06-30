@@ -3,6 +3,7 @@ package com.github.eighty88.jinrorpg;
 import com.github.eighty88.jinrorpg.command.*;
 import com.github.eighty88.jinrorpg.controller.BossBarController;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,12 +16,17 @@ import java.util.HashMap;
 public final class JinroRPG extends JavaPlugin {
     public static boolean isStarted;
 
-    public static HashMap<Player, JinroPlayer> JinroPlayers;
+    public static HashMap<Player, JinroPlayer> JinroPlayers = new HashMap<>();
 
     public static String GameMessage = ChatColor.RED + "[人狼RPG]" + ChatColor.GREEN + ": " + ChatColor.AQUA.toString();
 
     @Override
     public void onEnable() {
+        JinroPlayers.clear();
+        for(Player player: Bukkit.getOnlinePlayers()) {
+            JinroPlayers.put(player, new JinroPlayer(player));
+        }
+        Bukkit.getPluginManager().registerEvents(new EventListener(), this);
         isStarted = false;
         BossBarController.TickEvent();
     }

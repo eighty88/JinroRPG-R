@@ -3,7 +3,6 @@ package com.github.eighty88.jinrorpg.command;
 import com.github.eighty88.jinrorpg.JinroRPG;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
 import com.github.eighty88.jinrorpg.roles.RoleType;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

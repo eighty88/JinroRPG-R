@@ -32,6 +32,7 @@ public class GameMerchant {
         recipes.add(Recipe(ProvidenceEyes.getItemStack(), 2));
         recipes.add(Recipe(Knights.getItemStack(), 4));
         recipes.add(Recipe(Spell.getItemStack(), 3));
+        recipes.add(Recipe(OnlineShop.getItemStack(), 5));
 
         if(player.isJinro()) {
             recipes.add(Recipe(JinroAxe.getItemStack(),3));

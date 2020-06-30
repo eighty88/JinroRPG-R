@@ -1,7 +1,7 @@
 name: JinroRPG
 version: ${project.version}
 main: com.github.eighty88.jinrorpg.JinroRPG
-api-version: 1.15.2
+api-version: 1.15
 softdepend: [LunaChat]
 authors: [eight_y_88]
 description: WerewolfRPG Minigame

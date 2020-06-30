@@ -38,7 +38,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         e.setJoinMessage(JinroRPG.GameMessage + e.getPlayer().getName() + "さんがログインしました");
-        if(JinroRPG.JinroPlayers.containsKey(e.getPlayer())) {
+        if(!JinroRPG.JinroPlayers.containsKey(e.getPlayer()) && !JinroRPG.isStarted) {
             JinroPlayer player = new JinroPlayer(e.getPlayer());
             JinroRPG.JinroPlayers.put(e.getPlayer(), player);
         }
@@ -93,14 +93,16 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e) {
-        Entity entity = e.getRightClicked();
-        if (!(entity instanceof Villager))
-            return;
-        if (Objects.requireNonNull(entity.getCustomName()).equalsIgnoreCase(ChatColor.GREEN + "ShopKeeper")) {
-            e.setCancelled(true);
-            Player player = e.getPlayer();
-            GameMerchant.openGUI(JinroPlayer.getJinroPlayer(player));
-        }
+        try {
+            Entity entity = e.getRightClicked();
+            if (!(entity instanceof Villager))
+                return;
+            if (Objects.requireNonNull(entity.getCustomName()).equalsIgnoreCase(ChatColor.GREEN + "ShopKeeper")) {
+                e.setCancelled(true);
+                Player player = e.getPlayer();
+                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(player));
+            }
+        } catch (Exception ignored) {}
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

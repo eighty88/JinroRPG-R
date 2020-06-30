@@ -64,7 +64,7 @@ public class GameController {
             player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 128000, 4, true));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 127, true));
             player.getInventory().clear();
-            player.setPlayerListName("");
+            player.setPlayerListName("    ");
             player.getWorld().setDifficulty(Difficulty.EASY);
             player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 3));
             if(p.isJinro()) {
@@ -119,6 +119,7 @@ public class GameController {
         LivingPlayerController.isVampireDead = false;
         ArmorStands.clear();
         Jinro.clear();
+        JinroPlayer.RefreshPlayers();
         for(Sign sign: Signs) {
             sign.setLine(1, "右クリックで役職記録");
             sign.update();
