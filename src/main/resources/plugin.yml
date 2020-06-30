@@ -1,0 +1,44 @@
+name: JinroRPG
+version: ${project.version}
+main: com.github.eighty88.jinrorpg.JinroRPG
+api-version: 1.15.2
+softdepend: [LunaChat]
+authors: [eight_y_88]
+description: WerewolfRPG Minigame
+website: None
+commands:
+  start:
+    description: This is a command what start game
+    usage: /<command>
+    permission: op
+    permission-message: You don't have <permission>
+  end:
+    description: This is a command what end game
+    usage: /<command>
+    permission: op
+    permission-message: You don't have <permission>
+  shopkeeper:
+    description: This is a command what get shopkeeper spawn egg
+    usage: /<command>
+    permission: op
+    permission-message: You don't have <permission>
+  gamesign:
+    description: This is a command what get sign
+    usage: /<command>
+    permission: op
+    permission-message: You don't have <permission>
+  list:
+    description: This is a command what see player list
+    usage: /<command>
+    permission: jinro.player
+    permission-message: You don't have <permission>
+  watching:
+    description: This is a command what change watching mode
+    usage: /<command>
+    permission: jinro.player
+    permission-message: You don't have <permission>
+
+permissions:
+  jinro.player:
+    description: Player Permission
+    default: true
