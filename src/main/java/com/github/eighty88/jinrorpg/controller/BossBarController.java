@@ -7,7 +7,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 
 public class BossBarController {
     private static BossBar bar;
@@ -37,7 +36,7 @@ public class BossBarController {
         }, 0L, 10L);
     }
 
-    public static void ChangeBar(String title, BarColor color, @Nullable BarStyle style, @Nullable Double progress) {
+    public static void ChangeBar(String title, BarColor color, BarStyle style, Double progress) {
         bar.setTitle(title);
         bar.setColor(color);
         if(style!=null) {
