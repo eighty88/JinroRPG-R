@@ -15,10 +15,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -211,6 +208,7 @@ public class EventListener implements Listener {
                 }
             } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "オンラインショップ") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
                 GameMerchant.openGUI(JinroPlayer.getJinroPlayer(e.getPlayer()));
+                e.getPlayer().getInventory().removeItem(OnlineShop.getItemStack());
             }
         } catch (Exception ignored) {}
     }
@@ -248,13 +246,18 @@ public class EventListener implements Listener {
     public void onHit(ProjectileHitEvent e) {
         Entity hitPlayer = e.getHitEntity();
 
-        if ((e.getEntity() instanceof Snowball)) {
-            if(hitPlayer instanceof Player) {
-                Player player = (Player) hitPlayer;
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1, true));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 127, true));
+        try {
+            if (e.getEntity() instanceof Snowball) {
+                if (hitPlayer instanceof Player) {
+                    Player player = (Player) hitPlayer;
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1, true));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 127, true));
+                }
+            } else if (e.getEntity() instanceof Arrow) {
+                e.getEntity().remove();
+                ((LivingEntity) Objects.requireNonNull(e.getHitEntity())).damage(1000);
             }
-        }
+        } catch (Exception ignored) {}
     }
 
     @EventHandler

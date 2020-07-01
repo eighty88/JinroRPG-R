@@ -37,6 +37,7 @@ public class GameController {
     public static void Start() {
         if(Bukkit.getOnlinePlayers().size() <= 4) {
             Bukkit.broadcastMessage(JinroRPG.GameMessage + "人数が不足していたためスタートできませんでした");
+            return;
         }
         if(!LotteryRoles()) {
             return;

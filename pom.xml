@@ -6,7 +6,7 @@
 
     <groupId>com.github.eighty88</groupId>
     <artifactId>JinroRPG</artifactId>
-    <version>4.0-Rx</version>
+    <version>4.0-R1</version>
     <packaging>jar</packaging>
 
     <name>JinroRPG</name>
@@ -20,6 +20,16 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By>eight_y_88</Built-By>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
