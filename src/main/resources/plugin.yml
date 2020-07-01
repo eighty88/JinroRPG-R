@@ -37,6 +37,11 @@ commands:
     usage: /<command>
     permission: jinro.player
     permission-message: You don't have <permission>
+  j:
+    description: This is a command what change watching mode
+    usage: /<command>
+    permission: jinro.player
+    permission-message: You don't have <permission>
 
 permissions:
   jinro.player:

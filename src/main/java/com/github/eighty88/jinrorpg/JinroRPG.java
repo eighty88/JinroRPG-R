@@ -46,6 +46,8 @@ public final class JinroRPG extends JavaPlugin {
                 return ShopKeeperCommand.onCommand(sender);
             case "watching":
                 return WatchingModeCommand.onCommand(sender);
+            case "j":
+                return JinroChatCommand.onCommand(sender, args[0]);
         }
         return false;
     }

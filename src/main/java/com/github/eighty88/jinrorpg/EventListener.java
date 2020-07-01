@@ -329,8 +329,15 @@ public class EventListener implements Listener {
                                     player.damage(1000);
                                 }
                             }
+                            damager.getInventory().removeItem(RobberySword.getItemStack());
+                        } else if(damager.getInventory().getItemInMainHand().getType().equals(Material.STONE_AXE)) {
+                            if(jinroPlayer.isJinro()) {
+                                damager.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1, true));
+                                damager.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 127, true));
+                            } else {
+                                player.damage(1000);
+                            }
                         }
-                        damager.getInventory().removeItem(RobberySword.getItemStack());
                     }
                 }
             }
