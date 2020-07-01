@@ -19,7 +19,7 @@ public class TimeController {
 
     private static int SkeletonScheduler;
 
-    public static boolean isDay;
+    public static boolean isDay = true;
 
     private static boolean TimerStarted;
 
@@ -42,6 +42,7 @@ public class TimeController {
                 }
             }
         }, 0L, 5L);
+        BossBarController.ChangeBar(ChatColor.YELLOW + "DAY TIME", BarColor.YELLOW, null, null);
         isDay = true;
         TimerStarted = true;
         DayCycle();
@@ -77,7 +78,7 @@ public class TimeController {
                 }, 2000L);
             } else {
                 for(World world:Bukkit.getServer().getWorlds()) {
-                    world.setTime(6000);
+                    world.setTime(18000);
                 }
                 TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> {
                     for (Player player : Bukkit.getServer().getOnlinePlayers()) {

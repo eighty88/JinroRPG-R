@@ -9,6 +9,7 @@ import com.github.eighty88.jinrorpg.controller.TimeController;
 import com.github.eighty88.jinrorpg.merchant.GameMerchant;
 import com.github.eighty88.jinrorpg.merchant.itemstacks.*;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
+import com.github.eighty88.jinrorpg.roles.RoleType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -66,6 +67,9 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
+        if(!TimeController.isDay && JinroRPG.isStarted) {
+            e.setCancelled(true);
+        }
         if(e.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
             e.setCancelled(true);
             String Message = ChatColor.GRAY + "[霊界チャット]" + e.getPlayer().getName() + ": " + e.getMessage();
@@ -139,7 +143,7 @@ public class EventListener implements Listener {
                             JinroPlayer.getJinroPlayer(p).deSpell();
                             player.getInventory().removeItem(SFTHeart.getItemStack());
                         }
-                        if (TimeController.isDay) {
+                        if (!TimeController.isDay) {
                             if (player.getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
                                 JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(p);
                                 assert p != null;
@@ -302,6 +306,7 @@ public class EventListener implements Listener {
                         if (Objects.requireNonNull(damager.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.RESET + "聖なる十字架")) {
                             if (jinroPlayer.isVampire()) {
                                 jinroPlayer.death();
+                                LivingPlayerController.PlayerDeath(jinroPlayer);
                                 player.setGameMode(GameMode.SPECTATOR);
                             }
                             damager.getInventory().removeItem(HolyCross.getItemStack());
@@ -309,6 +314,7 @@ public class EventListener implements Listener {
                             if (jinroPlayer.isJinro()) {
                                 damager.sendTitle("あなたの役職は" + ChatColor.RED + "人狼" + ChatColor.WHITE + "になりました", "", 1, 50, 5);
                                 StringBuilder OtherJinro = new StringBuilder();
+                                JinroPlayer.getJinroPlayer(damager).setRole(RoleType.WEREWOLF);
                                 for (JinroPlayer pl : GameController.Jinro) {
                                     OtherJinro.append(pl.getName()).append(" ");
                                     pl.getPlayer().sendMessage(JinroRPG.GameMessage + damager.getName() + "の役職は" + ChatColor.RED + "人狼" + ChatColor.WHITE + "になりました");
@@ -318,6 +324,7 @@ public class EventListener implements Listener {
                                 player.damage(1000);
                             } else if (jinroPlayer.isVampire()) {
                                 if (TimeController.isDay) {
+                                    JinroPlayer.getJinroPlayer(damager).setRole(RoleType.VAMPIRE);
                                     damager.sendTitle("あなたの役職は" + ChatColor.DARK_PURPLE + "吸血鬼" + ChatColor.WHITE + "になりました", "", 1, 50, 5);
                                     damager.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + ChatColor.DARK_PURPLE + "吸血鬼");
                                     player.damage(1000);
@@ -325,7 +332,8 @@ public class EventListener implements Listener {
                             } else {
                                 if (!jinroPlayer.isUsingKnights()) {
                                     damager.sendTitle("あなたの役職は" + jinroPlayer.getRole().toString() + ChatColor.WHITE + "になりました", "", 1, 50, 5);
-                                    damager.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + ChatColor.GRAY + "共犯者");
+                                    damager.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + jinroPlayer.getRole().toString());
+                                    JinroPlayer.getJinroPlayer(damager).setRole(jinroPlayer.getRole());
                                     player.damage(1000);
                                 }
                             }
@@ -342,5 +350,19 @@ public class EventListener implements Listener {
                 }
             }
         } catch (Exception ignored) {}
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent e) {
+        if(e.getEntity() instanceof Skeleton) {
+            if(e.getEntity().getKiller() != null) {
+                e.setDroppedExp(0);
+                e.getDrops().clear();
+                int en = (int) Math.ceil(Math.random() * 2);
+                if(en == 1) {
+                    e.getEntity().getKiller().getInventory().addItem(new ItemStack(Material.EMERALD, 1));
+                }
+            }
+        }
     }
 }

@@ -12,8 +12,10 @@ public class WatchingModeCommand {
             JinroPlayer player = JinroPlayer.getJinroPlayer((Player) sender);
             if (player.getRole().equals(RoleType.WATCHING)) {
                 player.setRole(RoleType.NONE);
+                player.getPlayer().sendMessage(JinroRPG.GameMessage + "観戦モードがオフになりました");
             } else {
                 player.setRole(RoleType.WATCHING);
+                player.getPlayer().sendMessage(JinroRPG.GameMessage + "観戦モードがオンになりました");
             }
             return true;
         }

@@ -51,6 +51,7 @@ public class GameController {
                     stand.setSmall(true);
                     stand.setGravity(false);
                 }
+                world.setDifficulty(Difficulty.EASY);
             } catch(Exception ignored) {}
         }
 
@@ -88,9 +89,10 @@ public class GameController {
 
     public static void End(RoleType winner) {
         for (JinroPlayer player : JinroRPG.JinroPlayers.values()) {
-            if (winner != null) {
+            try {
+                player.getPlayer().setPlayerListName(player.getName());
                 player.getPlayer().sendTitle(winner.toString() + "の勝利", ChatColor.GOLD.toString() + ChatColor.UNDERLINE + "GAME END", 1, 50, 5);
-            }
+            } catch (Exception ignored) {}
             player.resetFlags();
         }
         StringBuilder JinroName = new StringBuilder();
@@ -114,6 +116,10 @@ public class GameController {
         Bukkit.broadcastMessage(ChatColor.BLUE.toString() + Robbery.getName());
         Bukkit.broadcastMessage(ChatColor.GREEN.toString() + ChatColor.STRIKETHROUGH + "==============================");
 
+        for(World world:Bukkit.getServer().getWorlds()) {
+            world.setDifficulty(Difficulty.PEACEFUL);
+            world.setTime(6000);
+        }
         JinroRPGAPI.onEnd();
         ResetRoles();
         TimeController.StopTimer();
@@ -123,6 +129,7 @@ public class GameController {
         Jinro.clear();
         JinroRPG.isStarted = false;
         JinroPlayer.RefreshPlayers();
+        TimeController.isDay = true;
         for(Sign sign: Signs) {
             sign.setLine(1, "右クリックで役職記録");
             sign.update();
@@ -150,7 +157,7 @@ public class GameController {
             Collections.shuffle(PlayerList);
             PlayerList.get(1).setRole(RoleType.WEREWOLF);
             Jinro.add(PlayerList.get(1));
-            PlayerList.remove(count);
+            PlayerList.remove(1);
         }
         Collections.shuffle(PlayerList);
         PlayerList.get(1).setRole(RoleType.VAMPIRE);

@@ -18,7 +18,7 @@ public class PlayerList {
     public static void OpenGUI(Player player) {
         Inventory inv = Bukkit.createInventory(null, 54, ChatColor.GOLD + "Joined Players");
         for (Player p : JinroRPG.JinroPlayers.keySet()) {
-            JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(player);
+            JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(p);
             List<String> lore = new ArrayList<>();
             ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
             SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
