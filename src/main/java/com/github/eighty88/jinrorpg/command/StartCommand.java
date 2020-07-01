@@ -2,6 +2,7 @@ package com.github.eighty88.jinrorpg.command;
 
 import com.github.eighty88.jinrorpg.JinroRPG;
 import com.github.eighty88.jinrorpg.controller.GameController;
+import com.github.eighty88.jinrorpg.roles.RoleType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -28,7 +29,7 @@ public class StartCommand {
             }
         }
         if(JinroRPG.isStarted) {
-            GameController.End(null);
+            GameController.End(RoleType.NONE);
         }
         GameController.Start();
         return true;

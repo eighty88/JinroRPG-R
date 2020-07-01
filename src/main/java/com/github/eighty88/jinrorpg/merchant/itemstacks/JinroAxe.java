@@ -16,6 +16,7 @@ public class JinroAxe {
         ItemStack result = new ItemStack(Material.STONE_AXE, 1, (short) 130);
         ItemMeta meta = result.getItemMeta();
         assert meta != null;
+        meta.setUnbreakable(true);
         meta.setDisplayName(ChatColor.RESET + "人狼の斧");
         meta.setLore(lore);
         result.setItemMeta(meta);

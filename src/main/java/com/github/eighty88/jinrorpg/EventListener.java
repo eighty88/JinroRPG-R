@@ -52,12 +52,20 @@ public class EventListener implements Listener {
         e.setQuitMessage(JinroRPG.GameMessage + e.getPlayer().getName() + "さんがログアウトしました");
         if(!JinroRPG.isStarted) {
             JinroRPG.JinroPlayers.remove(e.getPlayer());
+        } else if(JinroPlayer.getJinroPlayer(e.getPlayer()).getRole().equals(RoleType.NONE) || JinroPlayer.getJinroPlayer(e.getPlayer()).getRole().equals(RoleType.WATCHING)) {
+            JinroRPG.JinroPlayers.remove(e.getPlayer());
+        } else {
+            JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(e.getPlayer());
+            jinroPlayer.death();
+            LivingPlayerController.PlayerDeath(jinroPlayer);
+            jinroPlayer.getPlayer().setGameMode(GameMode.SPECTATOR);
         }
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         if(JinroRPG.isStarted) {
+            e.getDrops().clear();
             JinroPlayer.getJinroPlayer(e.getEntity()).death();
             LivingPlayerController.PlayerDeath(JinroPlayer.getJinroPlayer(e.getEntity()));
             Bukkit.getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> e.getEntity().spigot().respawn(), 1);
@@ -111,7 +119,7 @@ public class EventListener implements Listener {
         } catch (Exception ignored) {}
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         try {
             Block block = e.getClickedBlock();
@@ -170,6 +178,7 @@ public class EventListener implements Listener {
                     }
                 }
             } else if (e.getClickedBlock().getType() == Material.CHEST && JinroRPG.isStarted) {
+                e.setCancelled(true);
                 GameMerchant.openGUI(JinroPlayer.getJinroPlayer(e.getPlayer()));
             } else if (Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.RESET + "プロビデンスの眼光") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
                 for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
