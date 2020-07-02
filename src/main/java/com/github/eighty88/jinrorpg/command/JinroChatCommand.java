@@ -12,7 +12,7 @@ public class JinroChatCommand {
     public static  boolean onCommand(CommandSender sender, String args) {
         if(sender instanceof Player) {
             JinroPlayer player = JinroPlayer.getJinroPlayer((Player) sender);
-            if(player.isJinro()) {
+            if(player.isJinro() && !player.isDead()) {
                 for(JinroPlayer jinro: GameController.Jinro) {
                     jinro.getPlayer().sendMessage(ChatColor.RED + "[人狼チャット]" + player.getName() + ": " + args + ChatColor.GOLD + " (" + LunaChatTranslateAPI.Translate(args, TranslateType.GOOGLE_IME) + ")");
                 }
