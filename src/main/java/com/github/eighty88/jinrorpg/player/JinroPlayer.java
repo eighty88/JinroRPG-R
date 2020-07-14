@@ -2,6 +2,7 @@ package com.github.eighty88.jinrorpg.player;
 
 import com.github.eighty88.jinrorpg.JinroRPG;
 import com.github.eighty88.jinrorpg.roles.RoleType;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class JinroPlayer implements Comparable<JinroPlayer> {
@@ -116,10 +117,9 @@ public class JinroPlayer implements Comparable<JinroPlayer> {
     }
 
     public static void RefreshPlayers() {
-        for(Player player:JinroRPG.JinroPlayers.keySet()) {
-            if(!player.isOnline()) {
-                JinroRPG.JinroPlayers.remove(player);
-            }
+        JinroRPG.JinroPlayers.clear();
+        for(Player player: Bukkit.getOnlinePlayers()) {
+            JinroRPG.JinroPlayers.put(player, new JinroPlayer(player));
         }
     }
 }

@@ -31,7 +31,11 @@ public class BossBarController {
     public static void TickEvent() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(JinroRPG.getPlugin(JinroRPG.class), () -> {
             if(JinroRPG.isStarted) {
-                bar.setProgress(bar.getProgress() - 0.005);
+                if(TimeController.isDay) {
+                    bar.setProgress(bar.getProgress() - ((1.0 / TimeController.daytime) / 2));
+                } else {
+                    bar.setProgress(bar.getProgress() - ((1.0 / TimeController.nighttime) / 2));
+                }
             }
         }, 0L, 10L);
     }

@@ -1,11 +1,13 @@
 package com.github.eighty88.jinrorpg.controller;
 
 import com.github.eighty88.jinrorpg.JinroRPG;
+import com.github.eighty88.jinrorpg.JinroRPGAPI;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Beacon;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
@@ -15,13 +17,34 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.Collections;
 
 public class TimeController {
+
     private static int TimeScheduler;
 
     private static int SkeletonScheduler;
 
+    public static long period = 5;
+
+    public static double health = 2.0;
+
+    public static boolean equipment = false;
+
     public static boolean isDay = true;
 
     private static boolean TimerStarted;
+
+    public static long daytime = 100;
+
+    public static String dayTitle = "昼になりました";
+
+    public static String dayBarName = "DAY TIME";
+
+    public static long nighttime = 100;
+
+    public static String nightTitle = "夜になりました";
+
+    public static String nightBarName = "NIGHT TIME";
+
+    public static boolean beacon = false;
 
     public static void StartTimer() {
         SkeletonScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(JinroRPG.getJinroPlugin(), () -> {
@@ -30,19 +53,26 @@ public class TimeController {
                 ArmorStand armorStand = GameController.ArmorStands.get(0);
                 Entity EntitySkeleton = armorStand.getWorld().spawnEntity(armorStand.getLocation(), EntityType.SKELETON);
                 LivingEntity skeleton = (LivingEntity) EntitySkeleton;
-                EntityEquipment equipment = skeleton.getEquipment();
-                assert equipment != null;
-                equipment.clear();
-                equipment.getItemInMainHand().setType(Material.AIR);
-                skeleton.setHealth(2.0);
+                if(!equipment) {
+                    EntityEquipment equipment = skeleton.getEquipment();
+                    assert equipment != null;
+                    equipment.clear();
+                    equipment.getItemInMainHand().setType(Material.AIR);
+                }
+                skeleton.setHealth(health);
                 for(JinroPlayer player: JinroRPG.JinroPlayers.values()) {
                     if(player.isVampire() || player.isUsingKnights()) {
-                        player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, 127, true));
+                        player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 127, true));
+                    }
+                }
+                if(beacon) {
+                    for(JinroPlayer player: JinroRPG.JinroPlayers.values()) {
+                        player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 100, 1, true));
                     }
                 }
             }
-        }, 0L, 5L);
-        BossBarController.ChangeBar(ChatColor.YELLOW + "DAY TIME", BarColor.YELLOW, null, null);
+        }, 0L, period);
+        BossBarController.ChangeBar(ChatColor.YELLOW + dayBarName, BarColor.YELLOW, null, null);
         isDay = true;
         TimerStarted = true;
         DayCycle();
@@ -60,6 +90,7 @@ public class TimeController {
                 for(JinroPlayer player:JinroRPG.JinroPlayers.values()) {
                     player.onDay();
                 }
+                new JinroRPGAPI().onDay();
                 for(World world:Bukkit.getServer().getWorlds()) {
                     world.setTime(6000);
                     try {
@@ -70,24 +101,26 @@ public class TimeController {
                 }
                 TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> {
                     for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                        player.sendTitle(ChatColor.BLUE + "夜になりました", "", 1, 25, 5);
+                        player.sendTitle(ChatColor.BLUE + nightTitle, "", 1, 25, 5);
                     }
-                    BossBarController.ChangeBar(ChatColor.BLUE + "NIGHT TIME", BarColor.BLUE, null, null);
+                    BossBarController.ChangeBar(ChatColor.BLUE + nightBarName, BarColor.BLUE, null, null);
                     isDay = !isDay;
                     DayCycle();
-                }, 2000L);
+                }, daytime * 20);
             } else {
                 for(World world:Bukkit.getServer().getWorlds()) {
                     world.setTime(18000);
                 }
+                new JinroRPGAPI().onNight();
                 TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> {
                     for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                        player.sendTitle(ChatColor.YELLOW + "昼になりました", "", 1, 25, 5);
+                        player.sendTitle(ChatColor.YELLOW + dayTitle, "", 1, 25, 5);
                     }
-                    BossBarController.ChangeBar(ChatColor.YELLOW + "DAY TIME", BarColor.YELLOW, null, null);
+                    BossBarController.ChangeBar(ChatColor.YELLOW + dayBarName, BarColor.YELLOW, null, null);
+                    beacon = false;
                     isDay = !isDay;
                     DayCycle();
-                }, 2000L);
+                }, nighttime * 20);
             }
         }
     }

@@ -13,8 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameMerchant {
+
+    public static String name = "店員";
+
+    public static boolean allowMine = true;
     public static void openGUI(JinroPlayer player) {
-        Merchant merchant = Bukkit.createMerchant(ChatColor.RESET + "店員");
+        Merchant merchant = Bukkit.createMerchant(ChatColor.RESET + name);
 
         List<MerchantRecipe> recipes = new ArrayList<>();
 
@@ -33,12 +37,17 @@ public class GameMerchant {
         recipes.add(Recipe(Knights.getItemStack(), 4));
         recipes.add(Recipe(Spell.getItemStack(), 3));
         recipes.add(Recipe(OnlineShop.getItemStack(), 5));
+        recipes.add(Recipe(SmokePotion.getItemStack(), 10));
 
         if(player.isJinro()) {
             recipes.add(Recipe(JinroAxe.getItemStack(),3));
-            recipes.add(Recipe(Mine.getItemStack(), 5));
+            if(allowMine) {
+                recipes.add(Recipe(Mine.getItemStack(), 5));
+            }
         } else if(player.isAccomplice()) {
-            recipes.add(Recipe(Mine.getItemStack(), 5));
+            if(allowMine) {
+                recipes.add(Recipe(Mine.getItemStack(), 5));
+            }
             recipes.add(Recipe(AccompliceEye.getItemStack(), 5));
         } else if(player.isRobbery()) {
             recipes.add(Recipe(RobberySword.getItemStack(), 5));

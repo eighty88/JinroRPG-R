@@ -1,11 +1,28 @@
 package com.github.eighty88.jinrorpg;
 
-public abstract class JinroRPGAPI {
-    public static void onStart() {
-        return;
+public class JinroRPGAPI {
+
+    public JinroRPGAPI() {}
+
+    public void onStart() {
+
     }
 
-    public static void onEnd() {
-        return;
+    public void onEnd() {
+
     }
+
+    public void onDay() {
+
+    }
+
+    public void onNight() {
+
+    }
+
+    public String registerAddon() {
+        return "";
+    }
+
+
 }

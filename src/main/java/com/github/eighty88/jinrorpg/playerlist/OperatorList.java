@@ -34,8 +34,12 @@ public class OperatorList {
                 inv.addItem(head);
                 continue;
             }
-            if(GameController.Robbery.getName().equals(p.getName())) {
-                lore.add(jinroPlayer.getRole().toString() + "(強盗)");
+            if(GameController.enableRobbery) {
+                if (GameController.Robbery.getName().equals(p.getName())) {
+                    lore.add(jinroPlayer.getRole().toString() + "(強盗)");
+                } else {
+                    lore.add(jinroPlayer.getRole().toString());
+                }
             } else {
                 lore.add(jinroPlayer.getRole().toString());
             }
