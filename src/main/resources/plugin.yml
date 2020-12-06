@@ -1,11 +1,12 @@
 name: JinroRPG
 version: ${project.version}
 main: com.github.eighty88.jinrorpg.JinroRPG
-api-version: 1.15
 softdepend: [LunaChat]
 authors: [eight_y_88]
 description: WerewolfRPG Minigame
 website: None
+api-version: 1.13
+
 commands:
   start:
     description: This is a command what start game
@@ -27,18 +28,13 @@ commands:
     usage: /<command>
     permission: op
     permission-message: You don't have <permission>
+  armorstand:
+    description: This is a command what get armorstand
+    usage: /<command>
+    permission: op
+    permission-message: You don't have <permission>
   list:
     description: This is a command what see player list
-    usage: /<command>
-    permission: jinro.player
-    permission-message: You don't have <permission>
-  watching:
-    description: This is a command what change watching mode
-    usage: /<command>
-    permission: jinro.player
-    permission-message: You don't have <permission>
-  j:
-    description: This is a command what send jinro chat
     usage: /<command>
     permission: jinro.player
     permission-message: You don't have <permission>

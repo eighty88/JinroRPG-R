@@ -1,7 +1,6 @@
 package com.github.eighty88.jinrorpg.controller;
 
 import com.github.eighty88.jinrorpg.JinroRPG;
-import com.github.eighty88.jinrorpg.JinroRPGAPI;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
 import com.github.eighty88.jinrorpg.roles.RoleType;
 import org.bukkit.*;
@@ -32,15 +31,8 @@ public class GameController {
 
     public static JinroPlayer Accomplice;
 
-    public static JinroPlayer Robbery;
-
-    public static boolean enableRobbery = true;
-
     public static void Start() {
-        if(Bukkit.getOnlinePlayers().size() <= 4 && enableRobbery) {
-            Bukkit.broadcastMessage(JinroRPG.GameMessage + "人数が不足していたためスタートできませんでした");
-            return;
-        } else if(Bukkit.getOnlinePlayers().size() <= 3){
+        if(Bukkit.getOnlinePlayers().size() <= 3){
             Bukkit.broadcastMessage(JinroRPG.GameMessage + "人数が不足していたためスタートできませんでした");
             return;
         }
@@ -51,10 +43,12 @@ public class GameController {
             try {
                 for (Entity entity : world.getEntitiesByClass(ArmorStand.class)) {
                     ArmorStand stand = (ArmorStand) entity;
-                    ArmorStands.add(stand);
-                    stand.setVisible(false);
-                    stand.setSmall(true);
-                    stand.setGravity(false);
+                    if(stand.getScoreboardTags().contains("rpg")) {
+                        ArmorStands.add(stand);
+                        stand.setVisible(false);
+                        stand.setSmall(true);
+                        stand.setGravity(false);
+                    }
                 }
                 world.setDifficulty(Difficulty.EASY);
             } catch(Exception ignored) {}
@@ -89,7 +83,6 @@ public class GameController {
         JinroRPG.isStarted = true;
         BossBarController.CreateBossBar(ChatColor.RED + "人狼RPG", BarColor.GREEN, BarStyle.SOLID);
         TimeController.StartTimer();
-        new JinroRPGAPI().onStart();
     }
 
     public static void End(RoleType winner) {
@@ -117,10 +110,6 @@ public class GameController {
         Bukkit.broadcastMessage(ChatColor.RED.toString() + Vampire.getName());
         Bukkit.broadcastMessage(ChatColor.DARK_GREEN.toString() + ChatColor.BOLD + "村人");
         Bukkit.broadcastMessage(ChatColor.DARK_GREEN.toString() + InnocentName);
-        if(enableRobbery && JinroPlayer.getJinroPlayer(Robbery.getPlayer()).getRole().equals(RoleType.ROBBERY)) {
-            Bukkit.broadcastMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "強盗");
-            Bukkit.broadcastMessage(ChatColor.BLUE.toString() + Robbery.getName());
-        }
         Bukkit.broadcastMessage(ChatColor.GREEN.toString() + ChatColor.STRIKETHROUGH + "==============================");
 
         for(World world:Bukkit.getServer().getWorlds()) {
@@ -132,7 +121,6 @@ public class GameController {
             armorStand.setSmall(false);
             armorStand.setGravity(true);
         }
-        new JinroRPGAPI().onEnd();
         ResetRoles();
         TimeController.StopTimer();
         BossBarController.removeBossBar();
@@ -161,10 +149,7 @@ public class GameController {
                 Watching++;
             }
         }
-        if(All - Watching <= 4 && enableRobbery) {
-            Bukkit.broadcastMessage(JinroRPG.GameMessage + "人数が不足していたためスタートできませんでした");
-            return false;
-        } else if(All - Watching <= 3) {
+        if(All - Watching <= 3) {
             Bukkit.broadcastMessage(JinroRPG.GameMessage + "人数が不足していたためスタートできませんでした");
             return false;
         }
@@ -184,11 +169,6 @@ public class GameController {
         Accomplice = PlayerList.get(1);
         PlayerList.remove(1);
         Collections.shuffle(PlayerList);
-        if(enableRobbery) {
-            PlayerList.get(1).setRole(RoleType.ROBBERY);
-            Robbery = PlayerList.get(1);
-            PlayerList.remove(1);
-        }
         Collections.shuffle(PlayerList);
         for(JinroPlayer player: PlayerList) {
             Innocent.add(player);

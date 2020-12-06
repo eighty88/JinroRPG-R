@@ -8,7 +8,6 @@ public enum RoleType {
     WEREWOLF(ChatColor.RED + "人狼", ChatColor.RED + "人狼"),
     ACCOMPLICE(ChatColor.GRAY + "共犯者", ChatColor.GREEN + "村人"),
     VAMPIRE(ChatColor.DARK_PURPLE + "吸血鬼", ChatColor.DARK_PURPLE + "吸血鬼"),
-    ROBBERY(ChatColor.BLUE + "強盗", ChatColor.GREEN + "村人"),
     INNOCENT(ChatColor.GREEN + "村人", ChatColor.GREEN + "村人");
 
     private String Name;

@@ -22,8 +22,6 @@ public class LivingPlayerController {
             if(!p.isDead()) {
                 if (p.getRole().equals(RoleType.WEREWOLF)) {
                     jinro++;
-                } else if (p.getRole().equals(RoleType.ROBBERY)) {
-                    innocent++;
                 } else if (p.getRole().equals(RoleType.INNOCENT)) {
                     innocent++;
                 }

@@ -1,13 +1,13 @@
 package com.github.eighty88.jinrorpg.controller;
 
 import com.github.eighty88.jinrorpg.JinroRPG;
-import com.github.eighty88.jinrorpg.JinroRPGAPI;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Beacon;
 import org.bukkit.boss.BarColor;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
@@ -22,7 +22,7 @@ public class TimeController {
 
     private static int SkeletonScheduler;
 
-    public static long period = 5;
+    public static long period = 10;
 
     public static double health = 2.0;
 
@@ -90,7 +90,6 @@ public class TimeController {
                 for(JinroPlayer player:JinroRPG.JinroPlayers.values()) {
                     player.onDay();
                 }
-                new JinroRPGAPI().onDay();
                 for(World world:Bukkit.getServer().getWorlds()) {
                     world.setTime(6000);
                     try {
@@ -111,7 +110,6 @@ public class TimeController {
                 for(World world:Bukkit.getServer().getWorlds()) {
                     world.setTime(18000);
                 }
-                new JinroRPGAPI().onNight();
                 TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> {
                     for (Player player : Bukkit.getServer().getOnlinePlayers()) {
                         player.sendTitle(ChatColor.YELLOW + dayTitle, "", 1, 25, 5);

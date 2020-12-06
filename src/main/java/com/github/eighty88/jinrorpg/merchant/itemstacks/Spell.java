@@ -11,7 +11,7 @@ import java.util.List;
 public class Spell {
     public static ItemStack getItemStack() {
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.AQUA + "Qキーで投げると効果発動。");
+        lore.add(ChatColor.AQUA + "右クリックで効果発動。");
         lore.add(ChatColor.AQUA + "使用した夜、いつ、誰に占われたかわかる。");
         lore.add(ChatColor.AQUA + "一回占われると効果が切れる。");
         ItemStack result = new ItemStack(Material.PAPER, 1);

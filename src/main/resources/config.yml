@@ -2,31 +2,22 @@
 plugin:
   name: "人狼RPG"
 
-#人狼チャットと霊界チャットの表示名と利用可能かどうか
+#霊界チャットの表示名と利用可能かどうか
 chat:
   spiritworld:
     allow: true
     name: "霊界チャット"
-  jinro:
-    allow: true
-    name: "人狼チャット"
 
-#ゲーム内ショップの表示名と地雷を買えるかどうか
+#ゲーム内ショップの表示名
 shop:
   name: "店員"
-  allow:
-    mine: true
-
-#強盗を使用するか
-role:
-  enable:
-    robbery: true
 
 #スケルトンの設定
 skeleton:
   spawnticks: 5
   health: 2.0
   equipment: false
+  dropchance: 2 #dropchance分の1の確率でドロップします
 
 #時間
 times:
@@ -38,5 +29,3 @@ times:
     name: "NIGHT TIME"
     message: "夜になりました"
     seconds: 100
-
-allowbeacon: true

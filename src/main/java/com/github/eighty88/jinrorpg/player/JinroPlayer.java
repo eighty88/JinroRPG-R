@@ -16,6 +16,8 @@ public class JinroPlayer implements Comparable<JinroPlayer> {
 
     private boolean isDeath = false;
 
+    private int CanFT = 0;
+
     public String getName() {
         return player.getName();
     }
@@ -44,9 +46,6 @@ public class JinroPlayer implements Comparable<JinroPlayer> {
         return this.roleType.equals(RoleType.VAMPIRE);
     }
 
-    public boolean isRobbery() {
-        return this.roleType.equals(RoleType.ROBBERY);
-    }
 
     public boolean isInnocent() {
         return this.roleType.equals(RoleType.INNOCENT);
@@ -121,5 +120,25 @@ public class JinroPlayer implements Comparable<JinroPlayer> {
         for(Player player: Bukkit.getOnlinePlayers()) {
             JinroRPG.JinroPlayers.put(player, new JinroPlayer(player));
         }
+    }
+
+    public void BuyFT() {
+        CanFT++;
+    }
+
+    public void useFT() {
+        CanFT--;
+    }
+
+    public boolean isFT() {
+        return CanFT != 0;
+    }
+
+    public int getFT() {
+        return CanFT;
+    }
+
+    public void dKnights() {
+        isUseKnights = false;
     }
 }

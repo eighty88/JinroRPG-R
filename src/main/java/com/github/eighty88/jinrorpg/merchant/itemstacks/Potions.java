@@ -24,7 +24,7 @@ public class Potions {
         ItemStack result = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) result.getItemMeta();
         assert meta != null;
-        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 2000, 1, true), true);
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20000000, 1, true), true);
         meta.setColor(Color.AQUA);
         meta.setDisplayName(ChatColor.RESET + "俊敏のポーション");
         result.setItemMeta(meta);

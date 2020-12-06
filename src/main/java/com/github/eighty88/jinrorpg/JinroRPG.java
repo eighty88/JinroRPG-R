@@ -6,6 +6,9 @@ import com.github.eighty88.jinrorpg.controller.GameController;
 import com.github.eighty88.jinrorpg.controller.TimeController;
 import com.github.eighty88.jinrorpg.merchant.GameMerchant;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
+import com.github.eighty88.jinrorpg.roles.RoleType;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,7 +24,9 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public final class JinroRPG extends JavaPlugin {
     public static boolean isStarted;
@@ -41,13 +46,9 @@ public final class JinroRPG extends JavaPlugin {
             GameMessage = ChatColor.RED + "[" + conf.getString("plugin.name") + "]" + ChatColor.GREEN + ": " + ChatColor.AQUA.toString();
 
             GameMerchant.name = conf.getString("shop.name");
-            GameMerchant.allowMine = conf.getBoolean("shop.allow.mine");
-            JinroChatCommand.name = conf.getString("chat.jinro.name");
-            JinroChatCommand.allowChat = conf.getBoolean("chat.jinro.allow");
             EventListener.name = conf.getString("chat.spiritworld.name");
             EventListener.allowChat = conf.getBoolean("chat.spiritworld.allow");
-            EventListener.allowBeacon = conf.getBoolean("allowbeacon");
-            GameController.enableRobbery = conf.getBoolean("role.enable.robbery");
+            EventListener.Chance = conf.getInt("skeleton.dropchance");
             TimeController.period = conf.getLong("skeleton.spawnticks");
             TimeController.health = conf.getDouble("skeleton.health");
             TimeController.equipment = conf.getBoolean("skeleton.equipment");
@@ -69,6 +70,20 @@ public final class JinroRPG extends JavaPlugin {
         isStarted = false;
         BossBarController.TickEvent();
 
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                if(isStarted) {
+                    for(JinroPlayer player:JinroPlayers.values()) {
+                        player.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.BLUE + "占い可能回数: " + player.getFT()));
+                    }
+                }
+        }, 1, 1);
+    }
+
+    @Override
+    public void onDisable() {
+        if(isStarted) {
+            GameController.End(RoleType.NONE);
+        }
     }
 
     @Override
@@ -83,13 +98,22 @@ public final class JinroRPG extends JavaPlugin {
             case "end":
                 return EndCommand.onCommand();
             case "shopkeeper":
-                return ShopKeeperCommand.onCommand(sender);
-            case "watching":
-                return WatchingModeCommand.onCommand(sender);
-            case "j":
-                return JinroChatCommand.onCommand(sender, args[0]);
+                return ShopKeeperCommand.onCommand(sender, args[0]);
+            case "armorstand":
+                return ArmorStandCommand.onCommand(sender);
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if(sender instanceof Player && command.equals("shopkeeper")) {
+            List<String> result = new ArrayList<>();
+            result.add("item");
+            result.add("weapon");
+            return result;
+        }
+        return null;
     }
 
     public static Plugin getJinroPlugin() {

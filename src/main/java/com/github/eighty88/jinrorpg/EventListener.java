@@ -23,21 +23,26 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class EventListener implements Listener {
 
-    public static boolean allowBeacon = true;
-
     public static String name = "霊界チャット";
 
     public static boolean allowChat = true;
+
+    public static int Chance = 2;
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         e.setJoinMessage(JinroRPG.GameMessage + e.getPlayer().getName() + "さんがログインしました");
@@ -117,10 +122,14 @@ public class EventListener implements Listener {
             Entity entity = e.getRightClicked();
             if (!(entity instanceof Villager))
                 return;
-            if (Objects.requireNonNull(entity.getCustomName()).equalsIgnoreCase(ChatColor.GREEN + "ShopKeeper")) {
+            if (Objects.requireNonNull(entity.getCustomName()).equalsIgnoreCase(ChatColor.GREEN + "武器")) {
                 e.setCancelled(true);
                 Player player = e.getPlayer();
-                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(player));
+                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(player), GameMerchant.MerchantType.WEAPON);
+            } else if (Objects.requireNonNull(entity.getCustomName()).equalsIgnoreCase(ChatColor.GREEN + "アイテム")) {
+                e.setCancelled(true);
+                Player player = e.getPlayer();
+                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(player), GameMerchant.MerchantType.ITEMS);
             }
         } catch (Exception ignored) {}
     }
@@ -131,7 +140,7 @@ public class EventListener implements Listener {
             Block block = e.getClickedBlock();
             Player player = e.getPlayer();
             assert block != null;
-            if(block.getState() instanceof Sign) {
+            if(block.getState() instanceof Sign && e.getHand() == EquipmentSlot.HAND) {
                 Sign sign = (Sign) block.getState();
                 String[] lines = sign.getLines();
                 String l2 = lines[1];
@@ -146,19 +155,8 @@ public class EventListener implements Listener {
                 } else {
                     if(JinroRPG.isStarted) {
                         Player p = Bukkit.getServer().getPlayerExact(l2);
-                        if (player.getInventory().getItemInMainHand().getType().equals(Material.QUARTZ)) {
-                            JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(p);
-                            for(Player pl:Bukkit.getServer().getOnlinePlayers()) {
-                                pl.sendMessage(JinroRPG.GameMessage + player.getName() + "さんが大魔導士の心を使用しました。");
-                                assert p != null;
-                                pl.sendMessage(JinroRPG.GameMessage + p.getName() + "は" + jinroPlayer.getRole().getFortuneTelling() + ChatColor.AQUA + "です");
-                                pl.sendTitle(p.getName() + "の役職 : " + jinroPlayer.getRole().getFortuneTelling(), "", 1, 50, 5);
-                            }
-                            JinroPlayer.getJinroPlayer(p).deSpell();
-                            player.getInventory().removeItem(SFTHeart.getItemStack());
-                        }
                         if (!TimeController.isDay) {
-                            if (player.getInventory().getItemInMainHand().getType().equals(Material.STICK)) {
+                            if (JinroPlayer.getJinroPlayer(player).isFT()) {
                                 JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(p);
                                 assert p != null;
                                 player.sendMessage(JinroRPG.GameMessage + p.getName() + "は" + jinroPlayer.getRole().getFortuneTelling() + ChatColor.AQUA + "です");
@@ -167,26 +165,13 @@ public class EventListener implements Listener {
                                     p.sendMessage(JinroRPG.GameMessage + player.getName() + "に占われました!");
                                     jinroPlayer.deSpell();
                                 }
+                                JinroPlayer.getJinroPlayer(player).useFT();
                                 player.getInventory().removeItem(FTHeart.getItemStack());
-                            } else if (player.getInventory().getItemInMainHand().getType().equals(Material.SKELETON_SKULL)) {
-                                JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(p);
-                                assert p != null;
-                                if (jinroPlayer.isDead()) {
-                                    player.sendMessage(JinroRPG.GameMessage + p.getName() + "は死亡しています。");
-                                    player.sendTitle(p.getName() + " : " + ChatColor.GRAY + "死亡", "", 1, 50, 5);
-                                } else {
-                                    player.sendMessage(JinroRPG.GameMessage + p.getName() + "は生存しています。");
-                                    player.sendTitle(p.getName() + " : " + ChatColor.YELLOW + "生存", "", 1, 50, 5);
-                                }
-                                player.getInventory().removeItem(Mediumsheart.getItemStack());
                             }
                         }
                     }
                 }
-            } else if (e.getClickedBlock().getType() == Material.CHEST && JinroRPG.isStarted) {
-                e.setCancelled(true);
-                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(e.getPlayer()));
-            } else if (Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.RESET + "プロビデンスの眼光") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
+            } else if (Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().contains("プロビデンスの眼光") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND)) {
                 for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
                     if (e.getPlayer().getName().equals(pl.getName())) {
                         pl.sendMessage(JinroRPG.GameMessage + "プロビデンスの眼光を使用しました");
@@ -195,13 +180,13 @@ public class EventListener implements Listener {
                     }
                 }
                 player.getInventory().removeItem(ProvidenceEyes.getItemStack());
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "共犯者の目") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
+            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("共犯者の目") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND)) {
                 if (JinroRPG.isStarted) {
                     e.getPlayer().sendMessage(JinroRPG.GameMessage + "人狼の一人は" + GameController.Jinro.get(0).getName() + "です。");
                     Collections.shuffle(GameController.Jinro);
                 }
                 e.getPlayer().getInventory().removeItem(AccompliceEye.getItemStack());
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "騎士の祈り") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
+            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("騎士の祈り") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND)) {
                 if (JinroRPG.isStarted) {
                     if (!TimeController.isDay) {
                         if(JinroPlayer.getJinroPlayer(e.getPlayer()).isJinro()) {
@@ -215,7 +200,7 @@ public class EventListener implements Listener {
                         e.getPlayer().sendMessage(JinroRPG.GameMessage + "昼の間は使用することができません!");
                     }
                 }
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "天恵の呪符") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
+            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("天恵の呪符") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND)) {
                 if (JinroRPG.isStarted) {
                     if (!TimeController.isDay) {
                         JinroPlayer.getJinroPlayer(e.getPlayer()).useSpell();
@@ -225,9 +210,26 @@ public class EventListener implements Listener {
                         e.getPlayer().sendMessage(JinroRPG.GameMessage + "昼の間は使用することができません!");
                     }
                 }
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "オンラインショップ") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK )) {
-                GameMerchant.openGUI(JinroPlayer.getJinroPlayer(e.getPlayer()));
-                e.getPlayer().getInventory().removeItem(OnlineShop.getItemStack());
+            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("霊媒師の遺灰") && ( e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND)) {
+                if (JinroRPG.isStarted) {
+                    StringBuilder Builder = new StringBuilder();
+                    for(JinroPlayer pl :JinroRPG.JinroPlayers.values()) {
+                        if(pl.isDead()) {
+                            Builder.append(pl.getName()).append(" ");
+                        }
+                    }
+                    e.getPlayer().sendMessage(JinroRPG.GameMessage + Builder.toString() + "が死亡しています");
+                    player.getInventory().removeItem(MediumsAshes.getItemStack());
+                }
+            } else if (Objects.requireNonNull(e.getPlayer().getInventory().getItemInMainHand().getItemMeta()).getDisplayName().contains("人狼RPG用防具立て") && e.getHand() == EquipmentSlot.HAND) {
+                Location location = e.getClickedBlock().getLocation();
+                location.setY(location.getY() + 1);
+                ArmorStand armorStand = (ArmorStand) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ARMOR_STAND);
+                armorStand.setArms(true);
+                armorStand.addScoreboardTag("rpg");
+                location.setYaw(e.getPlayer().getLocation().getYaw() + 180);
+                armorStand.teleport(location);
+                location.getBlock().setType(Material.AIR);
             }
         } catch (Exception ignored) {}
     }
@@ -250,12 +252,10 @@ public class EventListener implements Listener {
                 } catch (Exception ignored) {}
             }
             e.setCancelled(true);
-        } else if(e.getView().getTopInventory().getType().equals(InventoryType.DROPPER) || e.getView().getTopInventory().getType().equals(InventoryType.DISPENSER)) {
-            if(!player.getGameMode().equals(GameMode.CREATIVE)) {
-                if(!item.getItemMeta().getDisplayName().equals(ChatColor.RESET + "地雷")) {
-                    e.setCancelled(true);
-                }
-            }
+        } else if(item != null && item.getType() == Material.HEART_OF_THE_SEA) {
+            JinroPlayer.getJinroPlayer(player).BuyFT();
+            e.getInventory().remove(new ItemStack(Material.EMERALD, 5));
+            e.setCancelled(true);
         }
     }
 
@@ -276,6 +276,11 @@ public class EventListener implements Listener {
             } else if (e.getEntity() instanceof Arrow) {
                 e.getEntity().remove();
                 ((LivingEntity) Objects.requireNonNull(e.getHitEntity())).damage(1000);
+                if(hitPlayer instanceof Player) {
+                    if(JinroPlayer.getJinroPlayer((Player) hitPlayer).isUsingKnights()) {
+                        JinroPlayer.getJinroPlayer((Player) hitPlayer).dKnights();
+                    }
+                }
             }
         } catch (Exception ignored) {}
     }
@@ -288,41 +293,46 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerPickUpItem(EntityPickupItemEvent e) {
+    public void onShoot(EntityShootBowEvent e) {
         if(e.getEntity() instanceof Player) {
-            Player player = (Player) e.getEntity();
-            if(e.getItem().getItemStack().equals(Mine.getItemStack())) {
-                JinroPlayer p = JinroPlayer.getJinroPlayer(player);
-                if(p.isInnocent()) {
-                    player.damage(1000);
-                    player.getWorld().createExplosion(player.getLocation(), 0);
-                    player.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, player.getLocation(), 500);
-                    e.setCancelled(true);
-                    e.getItem().remove();
-                } else if(p.isVampire()) {
-                    if(TimeController.isDay) {
-                        player.damage(1000);
-                        player.getWorld().createExplosion(player.getLocation(), 0);
-                        player.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, player.getLocation(), 500);
-                        player.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, player.getLocation(), 500, 1, 1, 1);
-                        e.setCancelled(true);
-                        e.getItem().remove();
-                    }
-                }
-            }
+            ((Player) e.getEntity()).getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         }
     }
-
     @EventHandler
     public void onPlayerAttacked(EntityDamageByEntityEvent e) {
         try {
             if (e.getDamager() instanceof Player) {
+                if(Objects.requireNonNull(((Player) e.getDamager()).getInventory().getItemInMainHand().getItemMeta()).getDisplayName().startsWith("スケ狩りの剣")) {
+                    int use = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(((Player) e.getDamager()).getInventory().getItemInMainHand().getItemMeta()).getLore()).get(0));
+                    use--;
+                    if(use >= -1) {
+                        List<String> lore = new ArrayList<>();
+                        lore.add(String.valueOf(use));
+                        ItemMeta meta = ((Player) e.getDamager()).getInventory().getItemInMainHand().getItemMeta();
+                        assert meta != null;
+                        ((Damageable) meta).setDamage((60 - (use * 2)) + 1);
+                        meta.setLore(lore);
+                        meta.setDisplayName("スケ狩りの剣 (" + use + "/30)");
+                        ((Player) e.getDamager()).getInventory().getItemInMainHand().setItemMeta(meta);
+                        if (e.getEntity() instanceof Skeleton) {
+                            ((Skeleton) e.getEntity()).damage(100);
+                            int en = (int) Math.ceil(Math.random() * 2);
+                            if (en == 1) {
+                                ((Player) e.getDamager()).getInventory().addItem(new ItemStack(Material.EMERALD, 1));
+                            }
+                        }
+                    }
+                } else {
+                    if(((Player) e.getDamager()).getInventory().getItemInMainHand().getType() != Material.STICK && e.getEntity() instanceof Skeleton) {
+                        e.setCancelled(true);
+                    }
+                }
                 if (e.getEntity() instanceof Player) {
                     Player damager = (Player) e.getDamager();
                     Player player = (Player) e.getEntity();
                     JinroPlayer jinroPlayer = JinroPlayer.getJinroPlayer(player);
                     if (JinroRPG.isStarted) {
-                        if (Objects.requireNonNull(damager.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.RESET + "聖なる十字架")) {
+                        if (Objects.requireNonNull(damager.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().contains("聖なる十字架")) {
                             if (jinroPlayer.isVampire()) {
                                 jinroPlayer.death();
                                 LivingPlayerController.PlayerDeath(jinroPlayer);
@@ -332,45 +342,20 @@ public class EventListener implements Listener {
                                 player.getWorld().spawnParticle(Particle.END_ROD, location, 100, 0.1, 0.1, 0.1, 0.1);
                             }
                             damager.getInventory().removeItem(HolyCross.getItemStack());
-                        } else if (JinroPlayer.getJinroPlayer(damager).isRobbery() && damager.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.RESET + "強盗の剣")) {
-                            if (jinroPlayer.isJinro()) {
-                                damager.sendTitle("あなたの役職は" + ChatColor.RED + "人狼" + ChatColor.WHITE + "になりました", "", 1, 50, 5);
-                                StringBuilder OtherJinro = new StringBuilder();
-                                JinroPlayer.getJinroPlayer(damager).setRole(RoleType.WEREWOLF);
-                                for (JinroPlayer pl : GameController.Jinro) {
-                                    OtherJinro.append(pl.getName()).append(" ");
-                                    pl.getPlayer().sendMessage(JinroRPG.GameMessage + damager.getName() + "の役職は" + ChatColor.RED + "人狼" + ChatColor.WHITE + "になりました");
-                                }
-                                damager.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + ChatColor.RED + "人狼 (" + OtherJinro + ")");
-                                GameController.Jinro.add(JinroPlayer.getJinroPlayer(damager));
-                                JinroPlayer.getJinroPlayer(damager).setRole(RoleType.WEREWOLF);
-                                player.damage(1000);
-                            } else if (jinroPlayer.isVampire()) {
-                                if (TimeController.isDay) {
-                                    JinroPlayer.getJinroPlayer(damager).setRole(RoleType.VAMPIRE);
-                                    damager.sendTitle("あなたの役職は" + ChatColor.DARK_PURPLE + "吸血鬼" + ChatColor.WHITE + "になりました", "", 1, 50, 5);
-                                    damager.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + ChatColor.DARK_PURPLE + "吸血鬼");
-                                    player.damage(1000);
-                                }
-                            } else {
-                                if (!jinroPlayer.isUsingKnights()) {
-                                    damager.sendTitle("あなたの役職は" + jinroPlayer.getRole().toString() + ChatColor.WHITE + "になりました", "", 1, 50, 5);
-                                    damager.sendMessage(JinroRPG.GameMessage + "あなたの役職 : " + jinroPlayer.getRole().toString());
-                                    JinroPlayer.getJinroPlayer(damager).setRole(jinroPlayer.getRole());
-                                    player.damage(1000);
-                                }
-                            }
-                            damager.getInventory().removeItem(RobberySword.getItemStack());
                         } else if(damager.getInventory().getItemInMainHand().getType().equals(Material.STONE_AXE)) {
                             if(jinroPlayer.isJinro()) {
                                 damager.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1, true));
                                 damager.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 127, true));
                             } else {
+                                if(JinroPlayer.getJinroPlayer(player).isUsingKnights()) {
+                                    JinroPlayer.getJinroPlayer(player).dKnights();
+                                }
                                 player.damage(1000);
                                 Location location = player.getLocation();
                                 location.setY(location.getY() + 1);
                                 player.getWorld().spawnParticle(Particle.BLOCK_CRACK, location, 100, 0.1, 0.1, 0.1, 0.1, Material.REDSTONE_BLOCK.createBlockData());
                             }
+                            ((Player) e.getDamager()).getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                         }
                     }
                 }
@@ -382,40 +367,19 @@ public class EventListener implements Listener {
     public void onEntityDeath(EntityDeathEvent e) {
         if(e.getEntity() instanceof Skeleton) {
             if(e.getEntity().getKiller() != null) {
-                e.setDroppedExp(0);
-                e.getDrops().clear();
                 int en = (int) Math.ceil(Math.random() * 2);
                 if(en == 1) {
                     e.getEntity().getKiller().getInventory().addItem(new ItemStack(Material.EMERALD, 1));
                 }
             }
+            e.setDroppedExp(0);
+            e.getDrops().clear();
         }
     }
 
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
         if(e.getInventory().getType().equals(InventoryType.BEACON)) {
-            if (e.getPlayer().getInventory().contains(new ItemStack(Material.EMERALD, 10)) && !TimeController.isDay && allowBeacon) {
-                e.getPlayer().getInventory().removeItem(new ItemStack(Material.EMERALD, 10));
-                TimeController.beacon = true;
-            }
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onSplashPotion(LingeringPotionSplashEvent e) {
-        if(Objects.requireNonNull(e.getEntity().getItem().getItemMeta()).getDisplayName().equals(ChatColor.RESET + "煙幕")) {
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.005);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.01);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.015);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.02);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.025);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.03);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.035);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.04);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.045);
-            e.getEntity().getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, e.getEntity().getLocation(), 1000, 0, 0,0 , 0.05);
             e.setCancelled(true);
         }
     }
