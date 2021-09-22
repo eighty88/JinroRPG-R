@@ -5,19 +5,19 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class FTHeart {
     public static ItemStack getItemStack() {
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.AQUA + "名前が書かれている看板を右クリックすると、");
-        lore.add(ChatColor.AQUA + "その人の役職が分かる。");
-        lore.add(ChatColor.AQUA + "共犯者は村人と出る。");
         ItemStack result = new ItemStack(Material.HEART_OF_THE_SEA, 1);
         ItemMeta meta = result.getItemMeta();
-        meta.setDisplayName(ChatColor.RESET + "占い師の心");
-        meta.setLore(lore);
+        Objects.requireNonNull(meta).setDisplayName(ChatColor.RESET + "占い師の心");
+        meta.setLore(Arrays.asList(
+                ChatColor.AQUA + "名前が書かれている看板を右クリックすると、",
+                ChatColor.AQUA + "その人の役職が分かる。",
+                ChatColor.AQUA + "共犯者は村人と出る。"
+        ));
         result.setItemMeta(meta);
         return result;
     }

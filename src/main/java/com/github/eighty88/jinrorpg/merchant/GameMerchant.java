@@ -22,15 +22,15 @@ public class GameMerchant {
         List<MerchantRecipe> recipes = new ArrayList<>();
 
         if(merchantType == MerchantType.WEAPON) {
-
             recipes.add(Recipe(Bow.getItemStack(), 2));
             recipes.add(Recipe(new ItemStack(Material.ARROW), 2));
             recipes.add(Recipe(new ItemStack(Material.COOKED_BEEF, 5), 1));
             recipes.add(Recipe(Sword.getItemStack(), 4));
             recipes.add(Recipe(StunGrenade.getItemStack(), 2));
-
+            if(player.isJinro()) {
+                recipes.add(Recipe(JinroAxe.getItemStack(),3));
+            }
         } else {
-
             recipes.add(Recipe(Potions.getInvisiblePot(), 4));
             recipes.add(Recipe(Potions.getSpeedPot(), 4));
             recipes.add(Recipe(FTHeart.getItemStack(), 5));
@@ -39,13 +39,9 @@ public class GameMerchant {
             recipes.add(Recipe(Knights.getItemStack(), 4));
             recipes.add(Recipe(Spell.getItemStack(), 3));
             recipes.add(Recipe(MediumsAshes.getItemStack(), 12));
-
-        }
-
-        if(player.isJinro() && merchantType == MerchantType.WEAPON) {
-            recipes.add(Recipe(JinroAxe.getItemStack(),3));
-        } else if(player.isAccomplice() && merchantType == MerchantType.ITEMS) {
-            recipes.add(Recipe(AccompliceEye.getItemStack(), 5));
+            if(player.isAccomplice()) {
+                recipes.add(Recipe(AccompliceEye.getItemStack(), 5));
+            }
         }
 
         merchant.setRecipes(recipes);
@@ -58,6 +54,7 @@ public class GameMerchant {
         recipe.addIngredient(new ItemStack(Material.EMERALD, emerald));
         return recipe;
     }
+
     public enum MerchantType {
         WEAPON(),ITEMS()
     }

@@ -14,6 +14,7 @@ public class DefaultList {
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
             SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+            assert skullMeta != null;
             skullMeta.setOwningPlayer(p);
             skullMeta.setDisplayName(ChatColor.RESET.toString() + ChatColor.AQUA + p.getName());
             head.setItemMeta(skullMeta);

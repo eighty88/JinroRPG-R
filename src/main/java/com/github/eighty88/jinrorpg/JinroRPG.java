@@ -33,7 +33,7 @@ public final class JinroRPG extends JavaPlugin {
 
     public static HashMap<Player, JinroPlayer> JinroPlayers = new HashMap<>();
 
-    public static String GameMessage = ChatColor.RED + "[人狼RPG]" + ChatColor.GREEN + ": " + ChatColor.AQUA.toString();
+    public static String GameMessage = ChatColor.RED + "[人狼RPG]" + ChatColor.GREEN + ": " + ChatColor.AQUA;
 
     @Override
     public void onEnable() {
@@ -43,7 +43,7 @@ public final class JinroRPG extends JavaPlugin {
         try(Reader reader=new InputStreamReader(new FileInputStream(confFilePath), StandardCharsets.UTF_8)){
             FileConfiguration conf=new YamlConfiguration();
             conf.load(reader);
-            GameMessage = ChatColor.RED + "[" + conf.getString("plugin.name") + "]" + ChatColor.GREEN + ": " + ChatColor.AQUA.toString();
+            GameMessage = ChatColor.RED + "[" + conf.getString("plugin.name") + "]" + ChatColor.GREEN + ": " + ChatColor.AQUA;
 
             GameMerchant.name = conf.getString("shop.name");
             EventListener.name = conf.getString("chat.spiritworld.name");
@@ -107,7 +107,7 @@ public final class JinroRPG extends JavaPlugin {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if(sender instanceof Player && command.equals("shopkeeper")) {
+        if(sender instanceof Player && command.getName().equals("shopkeeper")) {
             List<String> result = new ArrayList<>();
             result.add("item");
             result.add("weapon");

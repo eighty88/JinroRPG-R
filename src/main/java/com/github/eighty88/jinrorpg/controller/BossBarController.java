@@ -7,7 +7,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-
 public class BossBarController {
     private static BossBar bar;
 

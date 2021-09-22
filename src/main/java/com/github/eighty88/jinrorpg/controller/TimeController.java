@@ -2,8 +2,6 @@ package com.github.eighty88.jinrorpg.controller;
 
 import com.github.eighty88.jinrorpg.JinroRPG;
 import com.github.eighty88.jinrorpg.player.JinroPlayer;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class JinroPlayer implements Comparable<JinroPlayer> {
-    private Player player;
+    private final Player player;
 
     private RoleType roleType = RoleType.NONE;
 
@@ -45,7 +45,6 @@ public class JinroPlayer implements Comparable<JinroPlayer> {
     public boolean isVampire() {
         return this.roleType.equals(RoleType.VAMPIRE);
     }
-
 
     public boolean isInnocent() {
         return this.roleType.equals(RoleType.INNOCENT);
@@ -103,7 +102,7 @@ public class JinroPlayer implements Comparable<JinroPlayer> {
     }
 
     public boolean equals(Object other) {
-        return !(other instanceof JinroPlayer) ? false : this.toString().equals(other.toString());
+        return other instanceof JinroPlayer && this.toString().equals(other.toString());
     }
 
     @Override

@@ -29,25 +29,12 @@ public class OperatorList {
             skullMeta.setDisplayName(ChatColor.RESET.toString() + ChatColor.AQUA + p.getName());
             if(jinroPlayer.getRole().equals(RoleType.WATCHING) || jinroPlayer.getRole().equals(RoleType.NONE)) {
                 lore.add(ChatColor.RESET.toString() + ChatColor.GRAY + "観戦");
-                skullMeta.setLore(lore);
-                head.setItemMeta(skullMeta);
-                inv.addItem(head);
-                continue;
-            }
-            lore.add(jinroPlayer.getRole().toString());
-            if (jinroPlayer.isDead()) {
-                lore.add(ChatColor.RESET.toString() + ChatColor.GRAY + "死亡");
             } else {
-                lore.add(ChatColor.RESET.toString() + ChatColor.YELLOW + "生存");
-            }
-            if (jinroPlayer.isUsingKnights()) {
-                lore.add(ChatColor.RESET.toString() + ChatColor.YELLOW + "騎士の祈り使用中");
-            } else {
-                lore.add(ChatColor.RESET.toString() + ChatColor.GRAY + "騎士の祈りは使用していません");
-            }
-            lore.add(ChatColor.RESET.toString());
-            if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                lore.add(ChatColor.YELLOW + "クリックでテレポート");
+                lore.add(jinroPlayer.getRole().toString());
+                lore.add(jinroPlayer.isDead() ? ChatColor.RESET.toString() + ChatColor.GRAY + "死亡" : ChatColor.RESET.toString() + ChatColor.YELLOW + "生存");
+                lore.add(jinroPlayer.isUsingKnights() ? ChatColor.RESET.toString() + ChatColor.YELLOW + "騎士の祈り使用中" : ChatColor.RESET.toString() + ChatColor.GRAY + "騎士の祈りは使用していません");
+                lore.add(ChatColor.RESET.toString());
+                lore.add(player.getGameMode().equals(GameMode.SPECTATOR) ? ChatColor.YELLOW + "クリックでテレポート" : "");
             }
             skullMeta.setLore(lore);
             head.setItemMeta(skullMeta);

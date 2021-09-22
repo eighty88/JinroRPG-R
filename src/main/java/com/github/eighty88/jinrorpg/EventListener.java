@@ -218,7 +218,7 @@ public class EventListener implements Listener {
                             Builder.append(pl.getName()).append(" ");
                         }
                     }
-                    e.getPlayer().sendMessage(JinroRPG.GameMessage + Builder.toString() + "が死亡しています");
+                    e.getPlayer().sendMessage(JinroRPG.GameMessage + Builder + "が死亡しています");
                     player.getInventory().removeItem(MediumsAshes.getItemStack());
                 }
             } else if (Objects.requireNonNull(e.getPlayer().getInventory().getItemInMainHand().getItemMeta()).getDisplayName().contains("人狼RPG用防具立て") && e.getHand() == EquipmentSlot.HAND) {

@@ -22,6 +22,7 @@ public class PlayerList {
             List<String> lore = new ArrayList<>();
             ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
             SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+            assert skullMeta != null;
             skullMeta.setOwningPlayer(p);
             skullMeta.setDisplayName(ChatColor.RESET.toString() + ChatColor.AQUA + p.getName());
             if(jinroPlayer.getRole().equals(RoleType.NONE) || jinroPlayer.getRole().equals(RoleType.WATCHING)) {
@@ -36,7 +37,7 @@ public class PlayerList {
                     lore.add(ChatColor.RESET.toString() + ChatColor.RED + "人狼");
                 }
             } else if (p.getName().equals(player.getName())) {
-                lore.add(ChatColor.RESET.toString() + jinroPlayer.getRole().toString());
+                lore.add(ChatColor.RESET + jinroPlayer.getRole().toString());
             }
             skullMeta.setLore(lore);
             head.setItemMeta(skullMeta);
