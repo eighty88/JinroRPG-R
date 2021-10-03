@@ -79,8 +79,8 @@ public class EventListener implements Listener {
             e.getDrops().clear();
             JinroPlayer.getJinroPlayer(e.getEntity()).death();
             LivingPlayerController.PlayerDeath(JinroPlayer.getJinroPlayer(e.getEntity()));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> e.getEntity().spigot().respawn(), 1);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> e.getEntity().teleport(StartCommand.location), 5);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(JinroRPG.getInstance(), () -> e.getEntity().spigot().respawn(), 1);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(JinroRPG.getInstance(), () -> e.getEntity().teleport(StartCommand.location), 5);
         }
     }
 
@@ -264,15 +264,13 @@ public class EventListener implements Listener {
         Entity hitPlayer = e.getHitEntity();
 
         try {
-            if (e.getEntity() instanceof Snowball) {
-                if (hitPlayer instanceof Player) {
-                    Player player = (Player) hitPlayer;
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1, true));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 127, true));
-                    Location location = player.getLocation();
-                    player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 10, 1);
-                    player.getWorld().spawnParticle(Particle.FLASH, location, 10, 0.1, 0.1, 0.1, 0.1);
-                }
+            if (e.getEntity() instanceof Snowball && hitPlayer instanceof Player) {
+                Player player = (Player) hitPlayer;
+                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1, true));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 127, true));
+                Location location = player.getLocation();
+                player.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 10, 1);
+                player.getWorld().spawnParticle(Particle.FLASH, location, 10, 0.1, 0.1, 0.1, 0.1);
             } else if (e.getEntity() instanceof Arrow) {
                 e.getEntity().remove();
                 ((LivingEntity) Objects.requireNonNull(e.getHitEntity())).damage(1000);
@@ -374,13 +372,6 @@ public class EventListener implements Listener {
             }
             e.setDroppedExp(0);
             e.getDrops().clear();
-        }
-    }
-
-    @EventHandler
-    public void onOpenInventory(InventoryOpenEvent e) {
-        if(e.getInventory().getType().equals(InventoryType.BEACON)) {
-            e.setCancelled(true);
         }
     }
 }

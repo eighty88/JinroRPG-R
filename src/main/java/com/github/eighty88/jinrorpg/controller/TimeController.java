@@ -45,7 +45,7 @@ public class TimeController {
     public static boolean beacon = false;
 
     public static void StartTimer() {
-        SkeletonScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(JinroRPG.getJinroPlugin(), () -> {
+        SkeletonScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(JinroRPG.getInstance(), () -> {
             if (!isDay) {
                 Collections.shuffle(GameController.ArmorStands);
                 ArmorStand armorStand = GameController.ArmorStands.get(0);
@@ -96,7 +96,7 @@ public class TimeController {
                         }
                     } catch(Exception ignored) {}
                 }
-                TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> {
+                TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getInstance(), () -> {
                     for (Player player : Bukkit.getServer().getOnlinePlayers()) {
                         player.sendTitle(ChatColor.BLUE + nightTitle, "", 1, 25, 5);
                     }
@@ -108,7 +108,7 @@ public class TimeController {
                 for(World world:Bukkit.getServer().getWorlds()) {
                     world.setTime(18000);
                 }
-                TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getJinroPlugin(), () -> {
+                TimeScheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(JinroRPG.getInstance(), () -> {
                     for (Player player : Bukkit.getServer().getOnlinePlayers()) {
                         player.sendTitle(ChatColor.YELLOW + dayTitle, "", 1, 25, 5);
                     }

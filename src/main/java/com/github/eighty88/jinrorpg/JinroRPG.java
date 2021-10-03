@@ -35,8 +35,12 @@ public final class JinroRPG extends JavaPlugin {
 
     public static String GameMessage = ChatColor.RED + "[人狼RPG]" + ChatColor.GREEN + ": " + ChatColor.AQUA;
 
+    private static JinroRPG instance;
+
     @Override
     public void onEnable() {
+
+        instance = this;
 
         saveDefaultConfig();
         String confFilePath=getDataFolder() + File.separator + "config.yml";
@@ -116,7 +120,7 @@ public final class JinroRPG extends JavaPlugin {
         return null;
     }
 
-    public static Plugin getJinroPlugin() {
-        return JavaPlugin.getPlugin(JinroRPG.class);
+    public static JinroRPG getInstance() {
+        return instance;
     }
 }
