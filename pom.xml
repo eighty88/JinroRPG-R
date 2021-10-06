@@ -6,7 +6,7 @@
 
     <groupId>com.github.eighty88</groupId>
     <artifactId>JinroRPG</artifactId>
-    <version>4.0-Release78</version>
+    <version>4.0</version>
     <packaging>jar</packaging>
 
     <name>JinroRPG</name>
